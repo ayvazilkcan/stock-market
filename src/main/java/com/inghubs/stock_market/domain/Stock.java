@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(indexes = @Index(columnList = "name", unique = true))
 public class Stock extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Version
     private Integer version;

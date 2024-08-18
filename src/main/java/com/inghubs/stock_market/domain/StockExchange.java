@@ -19,7 +19,7 @@ import static com.inghubs.stock_market.util.Constants.MIN_STOCK_COUNT_FOR_BEING_
 public class StockExchange extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Version
     private Integer version;

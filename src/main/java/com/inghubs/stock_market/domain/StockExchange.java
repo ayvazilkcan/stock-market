@@ -5,11 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Optional;
 import java.util.Set;
 
 import static com.inghubs.stock_market.util.Constants.MIN_STOCK_COUNT_FOR_BEING_LIVE_IN_MARKET;
-import static java.util.Collections.emptySet;
 
 @Getter
 @Setter

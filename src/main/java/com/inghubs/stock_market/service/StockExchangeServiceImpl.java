@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.inghubs.stock_market.exception.StockMarketExceptionErrorCode.*;
@@ -42,14 +43,14 @@ public class StockExchangeServiceImpl implements StockExchangeService {
 
     @Override
     public StockExchangeDTO getStockExchangeByName(String name) {
-        StockExchange stockExchange = stockExchangeRepository.findByName(name).orElseThrow(() -> new StockMarketException(STOCK_EXCHANGE_NOT_FOUND_ERROR_CODE, "Stock Exchange is not found : " + name));
+        StockExchange stockExchange = getStockExchange(name);
         return stockExchangeMapper.mapFromDomainToDto(stockExchange);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public StockExchangeDTO addStockToStockExchangeByName(String stockExchangeName, String stockName) {
-        StockExchange stockExchange = stockExchangeRepository.findByName(stockExchangeName).orElseThrow(() -> new StockMarketException(STOCK_EXCHANGE_NOT_FOUND_ERROR_CODE, "Stock Exchange is not found : " + stockExchangeName));
+        StockExchange stockExchange = getStockExchange(stockExchangeName);
 
         Stock stock = stockService.getStockByName(stockName);
 
@@ -68,11 +69,11 @@ public class StockExchangeServiceImpl implements StockExchangeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteStockFromStockExchangeByName(String stockExchangeName, String stockName) {
-        StockExchange stockExchange = stockExchangeRepository.findByName(stockExchangeName).orElseThrow(() -> new StockMarketException(STOCK_EXCHANGE_NOT_FOUND_ERROR_CODE, "Stock Exchange is not found by " + stockExchangeName));
+        StockExchange stockExchange = getStockExchange(stockExchangeName);
 
         Stock stock = stockService.getStockByName(stockName);
 
-        Optional<Stock> foundStockInExchange = stockExchange.getStocks().stream().filter(item -> item.getName().equals(stock.getName())).findFirst();
+        Optional<Stock> foundStockInExchange = Optional.ofNullable(stockExchange.getStocks()).orElse(Collections.emptySet()).stream().filter(item -> item.getName().equals(stock.getName())).findFirst();
 
         if (foundStockInExchange.isEmpty()) {
             throw new StockMarketException(STOCK_NOT_EXIST_IN_EXCHANGE_ERROR_CODE, "Stock not exist in exchange : " + stockName);
@@ -81,6 +82,10 @@ public class StockExchangeServiceImpl implements StockExchangeService {
         stockExchange.removeStock(stock);
         stockExchange.updateLiveInMarket();
 
-        stockExchangeMapper.mapFromDomainToDto(stockExchangeRepository.save(stockExchange));
+        stockExchangeRepository.save(stockExchange);
+    }
+
+    private StockExchange getStockExchange(String name) {
+        return stockExchangeRepository.findByName(name).orElseThrow(() -> new StockMarketException(STOCK_EXCHANGE_NOT_FOUND_ERROR_CODE, "Stock Exchange is not found : " + name));
     }
 }

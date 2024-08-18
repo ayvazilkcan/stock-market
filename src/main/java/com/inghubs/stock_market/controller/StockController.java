@@ -5,6 +5,7 @@ import com.inghubs.stock_market.dto.StockDTO;
 import com.inghubs.stock_market.dto.StockPriceUpdateDTO;
 import com.inghubs.stock_market.service.StockService;
 import com.inghubs.stock_market.util.Constants;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class StockController {
 
     private final StockService stockService;
 
+    @Operation(summary = "Create a new stock")
     @PostMapping
     public ResponseEntity<ApiResponse<StockDTO>> createStock(@Valid @RequestBody StockDTO stockDTO) {
         StockDTO createdStockDTO = stockService.createStock(stockDTO);
@@ -31,6 +33,7 @@ public class StockController {
         return ResponseEntity.ok().body(apiResponse);
     }
 
+    @Operation(summary = "Update a stock price by name")
     @PatchMapping("/{name}")
     public ResponseEntity<ApiResponse<Void>> updateStockPrice(@PathVariable @NotBlank String name, @Valid @RequestBody StockPriceUpdateDTO stockPriceUpdateDTO) {
         stockService.updateStockPrice(name, stockPriceUpdateDTO);
@@ -43,6 +46,7 @@ public class StockController {
         return ResponseEntity.ok().body(apiResponse);
     }
 
+    @Operation(summary = "Delete a stock by name")
     @DeleteMapping("/{name}")
     public ResponseEntity<ApiResponse<Void>> deleteStock(@PathVariable @NotBlank String name) {
         stockService.deleteStockByName(name);

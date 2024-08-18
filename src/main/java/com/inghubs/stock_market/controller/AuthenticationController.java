@@ -5,6 +5,7 @@ import com.inghubs.stock_market.dto.*;
 import com.inghubs.stock_market.security.JwtService;
 import com.inghubs.stock_market.security.AuthenticationService;
 import com.inghubs.stock_market.util.Constants;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
 
+    @Operation(summary = "Register a new user")
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody RegisterUserDTO registerUserDto) {
         authenticationService.signUp(registerUserDto);
@@ -33,6 +35,7 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(apiResponse);
     }
 
+    @Operation(summary = "Login with a user and get token")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginUserResponseDTO>> authenticate(@Valid @RequestBody LoginUserRequestDTO loginUserRequestDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserRequestDto);
